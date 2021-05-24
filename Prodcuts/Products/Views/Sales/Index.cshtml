@@ -1,0 +1,121 @@
+﻿@model IEnumerable<Products.Models.Sale>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>List of Sales </h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.DateOfBilling)
+            </th>
+
+            <th>
+                Category
+            </th>
+
+            <th>
+                Sub Category
+            </th>
+
+            <th>
+                Model
+            </th>
+
+            <th>
+                @Html.DisplayNameFor(model => model.Product)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ModeOfPayment)
+            </th>
+
+            <th>
+                @Html.DisplayNameFor(model => model.Quantity)
+            </th>
+
+            <th>
+                Value
+            </th>
+
+
+            <th>
+                @Html.DisplayNameFor(model => model.CucstomerName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MobileNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EmailID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Address)
+            </th>
+
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.DateOfBilling)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.Product.ProductModel.SubCategory.Category.Name)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.Product.ProductModel.SubCategory.Name)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.Product.ProductModel.Name)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.Product.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ModeOfPayment.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Quantity)
+                </td>
+
+                <td>
+                    @((@item.Quantity * item.Product.UnitPrice).ToString())
+                </td>
+
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.CucstomerName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.MobileNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EmailID)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Address)
+                </td>
+
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
