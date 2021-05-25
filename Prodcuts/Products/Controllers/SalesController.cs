@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web.Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +14,31 @@ namespace Products.Controllers
     public class SalesController : Controller
     {
         private readonly ApplicationDbContext _context;
+
+
+        public JsonResult GetSubCategories(int categoryId)
+        {
+            var subCategories = _context.SubCategories.Where(s => s.CategoryId == categoryId).ToList();
+            subCategories.Insert(0, new SubCategory { Id = 0, Name = "Select" });
+            return Json(new SelectList(subCategories, "Id", "Name"));
+        }
+
+        public JsonResult GetProductModels(int subCategoryId)
+        {
+            var models = _context.ProductModels.Where(s => s.SubCategoryId == subCategoryId).ToList();
+            models.Insert(0, new ProductModel { Id = 0, Name = "Select" });
+
+            return Json(new SelectList(models, "Id", "Name"));
+        }
+
+        public JsonResult GetProducts(int productModelId)
+        {
+            var products = _context.Products.Where(s => s.ProductModelId == productModelId).ToList();
+            products.Insert(0, new Product{ Id = 0, Name = "Select" });
+
+            return Json(new SelectList(products, "Id", "Name"));
+        }
+
 
         public SalesController(ApplicationDbContext context)
         {
@@ -49,8 +75,24 @@ namespace Products.Controllers
         // GET: Sales/Create
         public IActionResult Create()
         {
+            var categories = _context.Categories.ToList();
+            categories.Insert(0, new Category { Id = 0, Name = "Select" });
+            ViewData["CategoryId"] = new SelectList(categories, "Id", "Name");
+
+            var subCategories = new List<SubCategory>();
+            subCategories.Insert(0, new SubCategory {Id=0, Name="Select" });
+            ViewData["SubCategoryId"] = new SelectList(subCategories, "Id", "Name");
+
+            var productModels = new List<ProductModel>();
+            productModels.Insert(0, new ProductModel { Id = 0, Name = "Select" });
+            ViewData["ProductModelId"] = new SelectList(productModels, "Id", "Name");
+
+            var products = new List<Product>();
+            products.Insert(0, new Product{ Id = 0, Name = "Select" });
+            ViewData["ProductId"] = new SelectList(products, "Id", "Name");
+
             ViewData["ModeOfPaymentId"] = new SelectList(_context.Set<ModeOfPayment>(), "Id", "Name");
-            ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Name");
+
             return View();
         }
 
@@ -61,6 +103,11 @@ namespace Products.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,ProductId,ModeOfPaymentId,Quantity,CucstomerName,MobileNumber,EmailID,Address,DateOfBilling")] Sale sale)
         {
+            if(sale.ProductId <1)
+            {
+                ModelState.AddModelError("", "Please select a valid Product");
+            }
+
             if (ModelState.IsValid)
             {
                 _context.Add(sale);
@@ -85,8 +132,15 @@ namespace Products.Controllers
             {
                 return NotFound();
             }
+           
+
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name");
+            ViewData["SubCategoryId"] = new SelectList(_context.SubCategories, "Id", "Name");
+            ViewData["ProductModelId"] = new SelectList(_context.ProductModels, "Id", "Name");
+
             ViewData["ModeOfPaymentId"] = new SelectList(_context.Set<ModeOfPayment>(), "Id", "Name", sale.ModeOfPaymentId);
             ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Id", sale.ProductId);
+
             return View(sale);
         }
 

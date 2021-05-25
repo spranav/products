@@ -13,13 +13,29 @@
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group">
+                Category
+                <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.CategoryId"></select>
+            </div>
+
+            <div class="form-group">
+                Sub Category
+                <select asp-for="SubCategoryId" class="form-control" asp-items="ViewBag.SubCategoryId"></select>
+            </div>
+
+            <div class="form-group">
+                Model
+                <select asp-for="ProductModelId" class="form-control" asp-items="ViewBag.ProductModelId"></select>
+            </div>
+
             <div class="form-group">
                 <label asp-for="ProductId" class="control-label"></label>
-                <select asp-for="ProductId" class ="form-control" asp-items="ViewBag.ProductId"></select>
+                <select asp-for="ProductId" class="form-control" asp-items="ViewBag.ProductId"></select>
             </div>
             <div class="form-group">
                 <label asp-for="ModeOfPaymentId" class="control-label"></label>
-                <select asp-for="ModeOfPaymentId" class ="form-control" asp-items="ViewBag.ModeOfPaymentId"></select>
+                <select asp-for="ModeOfPaymentId" class="form-control" asp-items="ViewBag.ModeOfPaymentId"></select>
             </div>
             <div class="form-group">
                 <label asp-for="Quantity" class="control-label"></label>
@@ -64,4 +80,54 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+<script>
+    $(document).ready(function () {
+
+        $("#CategoryId").change(function (e) {
+            var url = '@Url.Content("~/")' + "Sales/GetSubCategories";
+            var _categoryId = $("#CategoryId").val()
+            $.getJSON(url, { CategoryId: _categoryId }, function (data) {
+                var items = '';
+                $("#SubCategoryId").empty();
+                $.each(data, function (i, subCategory) {
+                    items += "<option value='" + subCategory.value + "'/>" + subCategory.text + "</option>"
+                });
+                $("#SubCategoryId").html(items);
+            });
+        });
+
+
+        $("#SubCategoryId").change(function (e) {
+            var url = '@Url.Content("~/")' + "Sales/GetProductModels";
+            var _subCategoryId = $("#SubCategoryId").val()
+            $.getJSON(url, { SubCategoryId: _subCategoryId }, function (data) {
+                var items = '';
+                $("#ProductModelId").empty();
+                $.each(data, function (i, productModel) {
+                    items += "<option value='" + productModel.value + "'/>" + productModel.text + "</option>"
+                });
+                $("#ProductModelId").html(items);
+            });
+        });
+
+
+         $("#ProductModelId").change(function (e) {
+            var url = '@Url.Content("~/")' + "Sales/GetProducts";
+             var _productModelId = $("#ProductModelId").val()
+             $.getJSON(url, { ProductModelId: _productModelId }, function (data) {
+                var items = '';
+                 $("#ProductId").empty();
+                $.each(data, function (i, product) {
+                    items += "<option value='" + product.value + "'/>" + product.text + "</option>"
+                });
+                 $("#ProductId").html(items);
+            });
+        });
+
+
+    });
+</script>
 }
+
+

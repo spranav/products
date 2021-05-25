@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -81,7 +82,14 @@ namespace Products.Models
 
         public DateTime DateOfBilling { get; set; }
 
+        [NotMapped]
+        public int CategoryId { get; set; }
 
+        [NotMapped]
+        public int SubCategoryId { get; set; }
+
+        [NotMapped]
+        public int ProductModelId { get; set; }
     }
 
 
